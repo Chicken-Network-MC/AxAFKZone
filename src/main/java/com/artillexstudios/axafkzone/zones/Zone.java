@@ -31,6 +31,7 @@ import static com.artillexstudios.axafkzone.AxAFKZone.CONFIG;
 import static com.artillexstudios.axafkzone.AxAFKZone.MESSAGEUTILS;
 
 public class Zone {
+    private final Map<Integer, Title> cachedTitles = new HashMap<>();
     private final ConcurrentHashMap<Player, Integer> zonePlayers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, BossBar> bossbars = new ConcurrentHashMap<>();
     private final LinkedList<Reward> rewards = new LinkedList<>();
@@ -130,11 +131,9 @@ public class Zone {
         String zoneTitle = settings.getString("in-zone.title", null);
         String zoneSubTitle = settings.getString("in-zone.subtitle", null);
         if (zoneTitle != null && !zoneTitle.isBlank() || zoneSubTitle != null && !zoneSubTitle.isBlank()) {
-            Title title = Title.title(
-                    StringUtils.format(zoneTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(player)))),
-                    StringUtils.format(zoneSubTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(player)))),
-                    Title.Times.times(Duration.ZERO, Duration.ofMillis(500), Duration.ZERO)
-            );
+            Title title = cachedTitles.get(zonePlayers.get(player));
+            if (title == null) return;
+
             player.showTitle(title);
         }
     }
@@ -187,7 +186,11 @@ public class Zone {
     public long timeUntilNext(Player player) {
         Integer time = zonePlayers.get(player);
         if (time == null) return -1;
-        return rewardSeconds * 1_000L - (time % rewardSeconds) * 1_000L;
+        return timeUntilNext(time);
+    }
+
+    public long timeUntilNext(int seconds) {
+        return rewardSeconds * 1_000L - (seconds % rewardSeconds) * 1_000L;
     }
 
     public List<Reward> rollAndGiveRewards(Player player) {
@@ -218,6 +221,20 @@ public class Zone {
 
         this.rewardSeconds = settings.getInt("reward-time-seconds", 180);
         this.rollAmount = settings.getInt("roll-amount", 1);
+
+        this.cachedTitles.clear();
+        for (int i = 0; i <= rewardSeconds; i++) {
+            String zoneTitle = settings.getString("in-zone.title", null);
+            String zoneSubTitle = settings.getString("in-zone.subtitle", null);
+            if (zoneTitle != null && !zoneTitle.isBlank() || zoneSubTitle != null && !zoneSubTitle.isBlank()) {
+                Title title = Title.title(
+                        StringUtils.format(zoneTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(i)))),
+                        StringUtils.format(zoneSubTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(i)))),
+                        Title.Times.times(Duration.ZERO, Duration.ofMillis(500), Duration.ZERO)
+                );
+                cachedTitles.put(i, title);
+            }
+        }
 
         rewards.clear();
         for (Map<Object, Object> map : settings.getMapList("rewards")) {
