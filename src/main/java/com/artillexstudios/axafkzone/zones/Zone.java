@@ -12,10 +12,11 @@ import com.artillexstudios.axapi.utils.BossBar;
 import com.artillexstudios.axapi.utils.Cooldown;
 import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axapi.utils.StringUtils;
-import com.artillexstudios.axapi.utils.Title;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
 import org.bukkit.entity.Player;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -129,12 +130,12 @@ public class Zone {
         String zoneTitle = settings.getString("in-zone.title", null);
         String zoneSubTitle = settings.getString("in-zone.subtitle", null);
         if (zoneTitle != null && !zoneTitle.isBlank() || zoneSubTitle != null && !zoneSubTitle.isBlank()) {
-            Title title = Title.create(
-                    zoneTitle == null ? Component.empty() : StringUtils.format(zoneTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(player)))),
-                    zoneSubTitle == null ? Component.empty() : StringUtils.format(zoneSubTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(player)))),
-                    0, 10, 0
+            Title title = Title.title(
+                    StringUtils.format(zoneTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(player)))),
+                    StringUtils.format(zoneSubTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(player)))),
+                    Title.Times.times(Duration.ZERO, Duration.ofMillis(500), Duration.ZERO)
             );
-            title.send(player);
+            player.showTitle(title);
         }
     }
 

@@ -44,7 +44,7 @@ public final class AxAFKZone extends AxPlugin {
         instance = this;
 
         int pluginId = 22054;
-        new Metrics(this, pluginId);
+        //new Metrics(this, pluginId);
 
         CONFIG = new Config(new File(getDataFolder(), "config.yml"), getResource("config.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setKeepAll(true).setVersioning(new BasicVersioning("version")).build());
         LANG = new Config(new File(getDataFolder(), "lang.yml"), getResource("lang.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
@@ -62,8 +62,8 @@ public final class AxAFKZone extends AxPlugin {
         getServer().getPluginManager().registerEvents(new WandListeners(), this);
         getServer().getPluginManager().registerEvents(new WorldListeners(), this);
 
-        metrics = new AxMetrics(this, 9);
-        metrics.start();
+        //metrics = new AxMetrics(this, 9);
+        //metrics.start();
 
         if (CONFIG.getBoolean("update-notifier.enabled", true)) new UpdateNotifier(this, 6598);
     }
