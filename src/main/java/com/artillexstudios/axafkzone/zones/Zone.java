@@ -80,7 +80,7 @@ public class Zone {
             }
             players.remove(player);
 
-            if (ticks % 20 == 5) {
+            if ((ticks / 20) % 5 == 0) { // update every 5 seconds
                 sendTitle(player);
                 sendActionbar(player);
                 updateBossbar(player);
