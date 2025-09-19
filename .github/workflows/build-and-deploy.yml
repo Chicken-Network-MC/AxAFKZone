@@ -1,0 +1,76 @@
+name: Build and Deploy to Cloudflare R2
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  release:
+    types: [ published ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v4
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Build with Maven
+      run: mvn clean package -DskipTests
+
+    - name: Get project version
+      id: version
+      run: echo "VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+    - name: Get artifact name
+      id: artifact
+      run: echo "ARTIFACT_NAME=$(mvn help:evaluate -Dexpression=project.artifactId -q -DforceStdout)" >> $GITHUB_OUTPUT
+
+    - name: Configure AWS CLI for Cloudflare R2
+      run: |
+        mkdir -p ~/.aws
+        echo "[default]" > ~/.aws/credentials
+        echo "aws_access_key_id = ${{ secrets.R2_ACCESS_KEY_ID }}" >> ~/.aws/credentials
+        echo "aws_secret_access_key = ${{ secrets.R2_SECRET_ACCESS_KEY }}" >> ~/.aws/credentials
+        echo "[default]" > ~/.aws/config
+        echo "region = us-east-1" >> ~/.aws/config
+
+    - name: Deploy to Cloudflare R2
+      env:
+        R2_ENDPOINT: ${{ secrets.R2_ENDPOINT }}
+      run: |
+        # Find the built JAR file
+        JAR_FILE=$(find target -name "*.jar" -not -name "*-sources.jar" -not -name "*-javadoc.jar" | head -1)
+        
+        if [ -z "$JAR_FILE" ]; then
+          echo "No JAR file found in target directory"
+          exit 1
+        fi
+        
+        echo "Found JAR file: $JAR_FILE"
+        
+        # Upload to R2 with artifact name from pom.xml
+        aws s3 cp "$JAR_FILE" "s3://github-builds/plugins/${{ steps.artifact.outputs.ARTIFACT_NAME }}.jar" --endpoint-url="$R2_ENDPOINT"
+        
+        echo "Successfully deployed: plugins/${{ steps.artifact.outputs.ARTIFACT_NAME }}.jar"
+
+    - name: Upload build artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ steps.artifact.outputs.ARTIFACT_NAME }}-${{ steps.version.outputs.VERSION }}
+        path: target/*.jar
+        retention-days: 30
