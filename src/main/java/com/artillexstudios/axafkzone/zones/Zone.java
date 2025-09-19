@@ -35,7 +35,7 @@ public class Zone {
     private final ConcurrentHashMap<Player, Integer> zonePlayers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, BossBar> bossbars = new ConcurrentHashMap<>();
     private final LinkedList<Reward> rewards = new LinkedList<>();
-    private final Cooldown<Player> cooldown = new Cooldown<>();
+    private final Cooldown<Player> cooldown = Cooldown.create();
     private final MessageUtils msg;
     private final String name;
     private final Config settings;
@@ -80,9 +80,11 @@ public class Zone {
             }
             players.remove(player);
 
-            sendTitle(player);
-            sendActionbar(player);
-            updateBossbar(player);
+            if (ticks % 20 == 5) {
+                sendTitle(player);
+                sendActionbar(player);
+                updateBossbar(player);
+            }
         }
 
         int ipLimit = CONFIG.getInt("zone-per-ip-limit", -1);
@@ -230,7 +232,7 @@ public class Zone {
                 Title title = Title.title(
                         StringUtils.format(zoneTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(i)))),
                         StringUtils.format(zoneSubTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(i)))),
-                        Title.Times.times(Duration.ZERO, Duration.ofMillis(500), Duration.ZERO)
+                        Title.Times.times(Duration.ZERO, Duration.ofSeconds(6), Duration.ZERO)
                 );
                 cachedTitles.put(i, title);
             }

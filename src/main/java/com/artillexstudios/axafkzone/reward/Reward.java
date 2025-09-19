@@ -23,14 +23,6 @@ public class Reward {
         final ArrayList<ItemStack> items = new ArrayList<>();
         Number chance = (Number) str.get("chance");
 
-        var map = (List<Map<Object, Object>>) str.get("items");
-        if (map != null) {
-            final LinkedList<Map<Object, Object>> map2 = new LinkedList<>(map);
-            for (Map<Object, Object> it : map2) {
-                items.add(new ItemBuilder(it).get());
-            }
-        }
-
         String display = null;
         if (str.containsKey("display")) display = (String) str.get("display");
 

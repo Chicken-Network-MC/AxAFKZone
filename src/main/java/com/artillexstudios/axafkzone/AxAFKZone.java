@@ -29,12 +29,6 @@ public final class AxAFKZone extends AxPlugin {
     public static Config LANG;
     public static MessageUtils MESSAGEUTILS;
     private static AxPlugin instance;
-    private static ThreadedQueue<Runnable> threadedQueue;
-    private static AxMetrics metrics;
-
-    public static ThreadedQueue<Runnable> getThreadedQueue() {
-        return threadedQueue;
-    }
 
     public static AxPlugin getInstance() {
         return instance;
@@ -54,8 +48,6 @@ public final class AxAFKZone extends AxPlugin {
 
         MESSAGEUTILS = new MessageUtils(LANG.getBackingDocument(), "prefix", CONFIG.getBackingDocument());
 
-        threadedQueue = new ThreadedQueue<>("AxAFKZone-Datastore-thread");
-
         Commands.registerCommand();
         FileUtils.loadAll();
 
@@ -73,7 +65,6 @@ public final class AxAFKZone extends AxPlugin {
     }
 
     public void disable() {
-        if (metrics != null) metrics.cancel();
         TickZones.stop();
         for (Zone zone : Zones.getZones().values()) {
             zone.disable();

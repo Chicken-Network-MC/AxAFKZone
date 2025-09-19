@@ -80,10 +80,6 @@
 
     <repositories>
         <repository>
-            <id>Artillex-Studios</id>
-            <url>https://repo.artillex-studios.com/releases/</url>
-        </repository>
-        <repository>
             <id>paper-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
         </repository>
@@ -110,8 +106,8 @@
         </dependency>
         <dependency>
             <groupId>com.artillexstudios.axapi</groupId>
-            <artifactId>axapi</artifactId>
-            <version>1.4.732</version>
+            <artifactId>axapi-cnw</artifactId>
+            <version>1.4.749</version>
             <scope>compile</scope>
             <classifier>all</classifier>
         </dependency>

@@ -13,6 +13,7 @@ import com.artillexstudios.axapi.items.NBTWrapper;
 import com.artillexstudios.axapi.utils.ItemBuilder;
 import com.artillexstudios.axapi.utils.StringUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -48,7 +49,7 @@ public class Commands implements OrphanCommand {
 
     @Subcommand("wand")
     public void wand(Player sender) {
-        final ItemStack it = new ItemBuilder(LANG.getSection("selection-wand")).glow(true).get();
+        final ItemStack it = new ItemStack(Material.BLAZE_ROD);
         NBTWrapper wrapper = new NBTWrapper(it);
         wrapper.set("axafkzone-wand", true);
         wrapper.build();
