@@ -14,17 +14,11 @@ import com.artillexstudios.axapi.utils.MessageUtils;
 import com.artillexstudios.axapi.utils.StringUtils;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.artillexstudios.axafkzone.AxAFKZone.CONFIG;
@@ -32,6 +26,7 @@ import static com.artillexstudios.axafkzone.AxAFKZone.MESSAGEUTILS;
 
 public class Zone {
     private final Map<Integer, Title> cachedTitles = new HashMap<>();
+    private final ConcurrentHashMap<Player, Integer> totalTime = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, Integer> zonePlayers = new ConcurrentHashMap<>();
     private final ConcurrentHashMap<Player, BossBar> bossbars = new ConcurrentHashMap<>();
     private final LinkedList<Reward> rewards = new LinkedList<>();
@@ -60,27 +55,30 @@ public class Zone {
             if (!player.isOnline()) {
                 players.remove(player);
                 leave(player, it);
+                totalTime.remove(player);
                 continue;
             }
 
             // player left
             if (!players.contains(player)) {
                 leave(player, it);
+                totalTime.remove(player);
                 continue;
             }
 
             if (runChecks) {
                 int newTime = zonePlayers.get(player) + 1;
                 zonePlayers.put(player, newTime);
+                totalTime.put(player, totalTime.getOrDefault(player, 0) + 1);
 
                 if (newTime != 0 && newTime % rewardSeconds == 0) {
                     giveRewards(player, newTime);
-                    if (CONFIG.getBoolean("reset-after-reward", false)) zonePlayers.put(player, 0);
+                    zonePlayers.put(player, 0);
                 }
             }
             players.remove(player);
 
-            int time = zonePlayers.get(player);
+            int time = totalTime.getOrDefault(player, 0);
             if (time <= 60) {
                 sendTitle(player);
             } else if (time <= 300) {
@@ -127,11 +125,12 @@ public class Zone {
     }
 
     private void leave(Player player, Iterator<Map.Entry<Player, Integer>> it) {
-        if (player.isOnline())
-            msg.sendLang(player, "messages.left", Map.of("%time%", TimeUtils.fancyTime(zonePlayers.get(player) * 1_000L)));
+        if (player.isOnline()) {
+            msg.sendLang(player, "messages.left", Map.of("%time%", TimeUtils.fancyTime(totalTime.get(player) * 1_000L)));
+            player.clearTitle();
+        }
+
         it.remove();
-        BossBar bossBar = bossbars.remove(player);
-        if (bossBar != null) bossBar.remove();
     }
 
     private void sendTitle(Player player) {
@@ -237,7 +236,7 @@ public class Zone {
                 Title title = Title.title(
                         StringUtils.format(zoneTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(i)))),
                         StringUtils.format(zoneSubTitle.replace("%time%", TimeUtils.fancyTime(timeUntilNext(i)))),
-                        Title.Times.times(Duration.ZERO, Duration.ofSeconds(6), Duration.ZERO)
+                        Title.Times.times(Duration.ZERO, Duration.ofSeconds(16), Duration.ZERO) // bursa 16 cCc
                 );
                 cachedTitles.put(i, title);
             }
