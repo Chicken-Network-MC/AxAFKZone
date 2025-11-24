@@ -1,5 +1,6 @@
 package com.artillexstudios.axafkzone;
 
+import com.artillexstudios.axafkzone.commands.CommandManager;
 import com.artillexstudios.axafkzone.commands.Commands;
 import com.artillexstudios.axafkzone.listeners.WandListeners;
 import com.artillexstudios.axafkzone.listeners.WorldListeners;
@@ -29,6 +30,12 @@ public final class AxAFKZone extends AxPlugin {
     public static Config LANG;
     public static MessageUtils MESSAGEUTILS;
     private static AxPlugin instance;
+    private static ThreadedQueue<Runnable> threadedQueue;
+    private static AxMetrics metrics;
+
+    public static ThreadedQueue<Runnable> getThreadedQueue() {
+        return threadedQueue;
+    }
 
     public static AxPlugin getInstance() {
         return instance;
@@ -37,8 +44,7 @@ public final class AxAFKZone extends AxPlugin {
     public void enable() {
         instance = this;
 
-        int pluginId = 22054;
-        //new Metrics(this, pluginId);
+        new Metrics(this, 22054);
 
         CONFIG = new Config(new File(getDataFolder(), "config.yml"), getResource("config.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setKeepAll(true).setVersioning(new BasicVersioning("version")).build());
         LANG = new Config(new File(getDataFolder(), "lang.yml"), getResource("lang.yml"), GeneralSettings.builder().setUseDefaults(false).build(), LoaderSettings.builder().setAutoUpdate(true).build(), DumperSettings.DEFAULT, UpdaterSettings.builder().setVersioning(new BasicVersioning("version")).build());
@@ -48,14 +54,16 @@ public final class AxAFKZone extends AxPlugin {
 
         MESSAGEUTILS = new MessageUtils(LANG.getBackingDocument(), "prefix", CONFIG.getBackingDocument());
 
-        Commands.registerCommand();
+        threadedQueue = new ThreadedQueue<>("AxAFKZone-Datastore-thread");
+
+        CommandManager.load();
         FileUtils.loadAll();
 
         getServer().getPluginManager().registerEvents(new WandListeners(), this);
         getServer().getPluginManager().registerEvents(new WorldListeners(), this);
 
-        //metrics = new AxMetrics(this, 9);
-        //metrics.start();
+        metrics = new AxMetrics(this, 9);
+        metrics.start();
 
         if (CONFIG.getBoolean("update-notifier.enabled", true)) new UpdateNotifier(this, 6598);
     }
@@ -65,6 +73,7 @@ public final class AxAFKZone extends AxPlugin {
     }
 
     public void disable() {
+        if (metrics != null) metrics.cancel();
         TickZones.stop();
         for (Zone zone : Zones.getZones().values()) {
             zone.disable();

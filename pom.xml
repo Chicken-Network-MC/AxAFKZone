@@ -3,7 +3,7 @@
 
     <groupId>com.artillexstudios</groupId>
     <artifactId>AxAFKZone</artifactId>
-    <version>1.7.2</version>
+    <version>1.8.1</version>
     <packaging>jar</packaging>
 
     <name>AxAFKZone</name>
@@ -80,8 +80,12 @@
 
     <repositories>
         <repository>
-            <id>paper-repo</id>
-            <url>https://repo.papermc.io/repository/maven-public/</url>
+            <id>Artillex-Studios</id>
+            <url>https://repo.artillex-studios.com/releases/</url>
+        </repository>
+        <repository>
+            <id>spigotmc-repo</id>
+            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
         </repository>
         <repository>
             <id>jitpack.io</id>
@@ -99,15 +103,15 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.papermc.paper</groupId>
-            <artifactId>paper-api</artifactId>
-            <version>1.21.9-R0.1-SNAPSHOT</version>
+            <groupId>org.spigotmc</groupId>
+            <artifactId>spigot-api</artifactId>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.artillexstudios.axapi</groupId>
-            <artifactId>axapi-cnw</artifactId>
-            <version>1.4.749</version>
+            <artifactId>axapi</artifactId>
+            <version>1.4.803</version>
             <scope>compile</scope>
             <classifier>all</classifier>
         </dependency>
@@ -124,7 +128,7 @@
             <scope>compile</scope>
             <exclusions>
                 <exclusion>
-                    <artifactId>net.kyori</artifactId>
+                    <artifactId>*</artifactId>
                     <groupId>*</groupId>
                 </exclusion>
             </exclusions>
@@ -132,7 +136,7 @@
         <dependency>
             <groupId>org.bstats</groupId>
             <artifactId>bstats-bukkit</artifactId>
-            <version>3.0.2</version>
+            <version>3.1.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

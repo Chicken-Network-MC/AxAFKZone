@@ -1,11 +1,14 @@
+# DOCUMENTATION: https://docs.artillex-studios.com/axafkzone.html
+
 help:
   - " "
-  - "<gradient:#FF8800:#CC0055><b>AxAFKZone</b></gradient> &#FF8855Help &7»"
-  - " &7- &f/axafkzone reload &7| &#FF8855Reload plugin"
-  - " &7- &f/axafkzone wand &7| &#FF8855Give wand"
-  - " &7- &f/axafkzone create <zone> &7| &#FF8855Create zone"
-  - " &7- &f/axafkzone delete <zone> &7| &#FF8855Delete zone"
-  - " &7- &f/axafkzone redefine <zone> &7| &#FF8855Redefine area of zone"
+  - "<gradient:#FF8800:#CC0055><b>AxAFKZone</b></gradient> <#FF7700>Help"
+  - " <#FF7700>➤ <white>/axafkzone reload <#DDDDDD>| <#FFAA00>Reload plugin"
+  - " <#FF7700>➤ <white>/axafkzone wand <#DDDDDD>| <#FFAA00>Give wand"
+  - " <#FF7700>➤ <white>/axafkzone create <zone> <#DDDDDD>| <#FFAA00>Create zone"
+  - " <#FF7700>➤ <white>/axafkzone delete <zone> <#DDDDDD>| <#FFAA00>Delete zone"
+  - " <#FF7700>➤ <white>/axafkzone redefine <zone> <#DDDDDD>| <#FFAA00>Update zone area"
+  - " <#FF7700>➤ <white>/axafkzone tp <zone> <#DDDDDD>| <#FFAA00>Teleport to center of zone"
   - " "
 
 reload:
@@ -20,13 +23,13 @@ time:
 
 selection-wand:
   material: "GOLDEN_AXE"
-  name: "&#CC0055&lSELECTION WAND"
+  name: "&#FF8800&lSELECTION WAND"
   lore:
     - " "
-    - "&#CC0055ʟᴇғᴛ ᴄʟɪᴄᴋ"
+    - "&#FF8800ʟᴇғᴛ ᴄʟɪᴄᴋ"
     - " &7- &fSelect position #1"
     - " "
-    - "&#CC0055ʀɪɢʜᴛ ᴄʟɪᴄᴋ"
+    - "&#FF8800ʀɪɢʜᴛ ᴄʟɪᴄᴋ"
     - " &7- &fSelect position #2"
     - " "
 
@@ -37,6 +40,10 @@ zone:
   already-exists: "&#FF8855Zone with name &#CC0055%name% &#FF8855already exists!"
   ip-limit: "&#FF8855You can not have any more accounts in this zone from your IP address."
   redefined: "&#FF8855You have redefined the zone named &#CC0055%name%&#FF8855!"
+
+teleport:
+  success: "&#FF8855Successfully teleported to the &#CC0055%name% &#FF8855zone!"
+  fail: "&#FF8855Can't teleport to the &#CC0055%name% &#FF8855zone, because the world is not loaded!"
 
 selection:
   pos1: "&#FFBB00Selected &#CC0055POSITION #1 &7- &#DDDDDD%location%"
@@ -57,4 +64,4 @@ commands:
 update-notifier: "&#FFAA77There is a new version of AxAFKZone available! &#DDDDDD(&#FFFFFFcurrent: &#FF0000%current% &#DDDDDD| &#FFFFFFlatest: &#00FF00%latest%&#DDDDDD)"
 
 # do not change this
-version: 2
+version: 3

@@ -1,3 +1,6 @@
+# DOCUMENTATION: https://docs.artillex-studios.com/axafkzone.html
+# ITEM BUILDER: https://docs.artillex-studios.com/item-builder.html
+
 messages:
   entered: "&#FF8855You have entered the AFK zone! You will get a reward in &#CC0055%time%&#FF8855!"
   left: "&#FF8855You have left the AFK zone! You stayed here for &#CC0055%time%&#FF8855!"
