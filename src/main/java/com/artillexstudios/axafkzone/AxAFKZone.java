@@ -1,7 +1,6 @@
 package com.artillexstudios.axafkzone;
 
 import com.artillexstudios.axafkzone.commands.CommandManager;
-import com.artillexstudios.axafkzone.commands.Commands;
 import com.artillexstudios.axafkzone.listeners.WandListeners;
 import com.artillexstudios.axafkzone.listeners.WorldListeners;
 import com.artillexstudios.axafkzone.schedulers.TickZones;
@@ -12,7 +11,6 @@ import com.artillexstudios.axafkzone.zones.Zone;
 import com.artillexstudios.axafkzone.zones.Zones;
 import com.artillexstudios.axapi.AxPlugin;
 import com.artillexstudios.axapi.config.Config;
-import com.artillexstudios.axapi.executor.ThreadedQueue;
 import com.artillexstudios.axapi.libs.boostedyaml.dvs.versioning.BasicVersioning;
 import com.artillexstudios.axapi.libs.boostedyaml.settings.dumper.DumperSettings;
 import com.artillexstudios.axapi.libs.boostedyaml.settings.general.GeneralSettings;
@@ -30,13 +28,7 @@ public final class AxAFKZone extends AxPlugin {
     public static Config LANG;
     public static MessageUtils MESSAGEUTILS;
     private static AxPlugin instance;
-    private static ThreadedQueue<Runnable> threadedQueue;
     private static AxMetrics metrics;
-
-    public static ThreadedQueue<Runnable> getThreadedQueue() {
-        return threadedQueue;
-    }
-
     public static AxPlugin getInstance() {
         return instance;
     }
@@ -53,8 +45,6 @@ public final class AxAFKZone extends AxPlugin {
         TickZones.start();
 
         MESSAGEUTILS = new MessageUtils(LANG.getBackingDocument(), "prefix", CONFIG.getBackingDocument());
-
-        threadedQueue = new ThreadedQueue<>("AxAFKZone-Datastore-thread");
 
         CommandManager.load();
         FileUtils.loadAll();

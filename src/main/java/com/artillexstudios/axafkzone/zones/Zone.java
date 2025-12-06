@@ -126,7 +126,10 @@ public class Zone {
 
     private void leave(Player player, Iterator<Map.Entry<Player, Integer>> it) {
         if (player.isOnline()) {
-            msg.sendLang(player, "messages.left", Map.of("%time%", TimeUtils.fancyTime(totalTime.get(player) * 1_000L)));
+            Integer time = totalTime.get(player);
+            if (time == null) time = 60;
+
+            msg.sendLang(player, "messages.left", Map.of("%time%", TimeUtils.fancyTime(time * 1_000L)));
             player.clearTitle();
         }
 
