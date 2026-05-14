@@ -54,7 +54,10 @@ public class Reward {
                 Bukkit.dispatchCommand(Bukkit.getConsoleSender(), cmd.replace("%player%", player.getName()));
             }
         });
-        ContainerUtils.INSTANCE.addOrDrop(player.getInventory(), items, player.getLocation());
+        //ContainerUtils.INSTANCE.addOrDrop(player.getInventory(), items, player.getLocation());
+        if (!items.isEmpty()) {
+            items.forEach(item -> player.getInventory().addItem(item));
+        }
     }
 
     @Override
